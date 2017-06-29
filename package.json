@@ -1,0 +1,34 @@
+{
+  "name": "historify",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "express-graphql": "^0.6.6",
+    "faker": "^4.1.0",
+    "graphql": "^0.10.3",
+    "graphql-relay": "^0.5.2",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-redux": "^5.0.5",
+    "redux": "^3.7.0",
+    "redux-thunk": "^2.2.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-latest": "^6.24.1",
+    "nodemon": "^1.11.0",
+    "react-scripts": "1.0.7"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "server:start": "node ./server./build/index.js",
+    "server:dev": "nodemon --exec yarn babel-node -- ./server/src/index.js",
+    "server:build": "babel ./server/src -d ./server/build"
+  },
+  "proxy": "http://localhost:8000"
+}
