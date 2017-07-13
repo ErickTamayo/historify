@@ -174,6 +174,6 @@ app.use('/graphql', graphqlHTTP({
     graphiql: true,
 }));
 
-const server = app.listen(3000, () => {
+const server = app.listen(8000, () => {
     console.log('Server running at http://localhost:' + server.address().port);
 });

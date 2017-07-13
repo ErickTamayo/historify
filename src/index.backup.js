@@ -1,20 +1,29 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import {
+    createStore,
+    applyMiddleware
+} from 'redux';
+import thunk from 'redux-thunk';
 import App from './App';
-
+import historifyApp from './reducers';
+import registerServiceWorker from './registerServiceWorker';
 import {
     QueryRenderer,
     graphql,
 } from 'react-relay';
-
 import {
     Environment,
     Network,
     RecordSource,
     Store,
-    ConnectionHandler,
-    ViewerHandler,
 } from 'relay-runtime';
+
+import './index.css';
+
+const middlewares = [thunk];
+let store = createStore(historifyApp, applyMiddleware(...middlewares));
 
 function fetchQuery(
   operation,
@@ -34,38 +43,25 @@ function fetchQuery(
   });
 }
 
-const source = new RecordSource();
-const store = new Store(source);
-const network = Network.create(fetchQuery);
-
-function handlerProvider(handle) {
-  switch (handle) {
-    // Augment (or remove from) this list:
-    case 'connection': return ConnectionHandler;
-    case 'viewer': return ViewerHandler;
-  }
-  throw new Error(
-    `handlerProvider: No handler provided for ${handle}`
-  );
-}
-
-const environment = new Environment({
-  handlerProvider,
-  network,
-  store,
+const modernEnvironment = new Environment({
+  network: Network.create(fetchQuery),
+  store: new Store(new RecordSource()),
 });
+
+
+ReactDOM.render(
+    <Provider store={store}>
+        <App />
+    </Provider>,
+    document.getElementById('root'));
 
 ReactDOM.render(
   <QueryRenderer
-    environment={environment}
+    environment={modernEnvironment}
     query={graphql`
       query appQuery {
-        songs {
-          edges {
-            node {
-              name
-            }
-          }
+        viewer {
+          ...App_viewer
         }
       }
     `}
@@ -80,3 +76,7 @@ ReactDOM.render(
   />,
   document.getElementById('root')
 );
+
+registerServiceWorker();
+
+
