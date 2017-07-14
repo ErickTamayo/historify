@@ -23,6 +23,7 @@ import {
 } from 'graphql-relay';
 
 import {
+    getUser,
     getSongs,
     getSongById,
     createSong,
@@ -71,19 +72,44 @@ const { connectionType: SongConnection } = connectionDefinitions({
     nodeType: songType,
 });
 
+const userType = new GraphQLObjectType({
+    name: 'User',
+    description: 'An app user',
+    fields: {
+        id: globalIdField(),
+        name: {
+            type: GraphQLString,
+            description: 'The name of the user',
+        },
+        profileImg: {
+            type: GraphQLString,
+            description: 'Profile picture',
+        },
+        playedAllTime: {
+            type: GraphQLInt,
+            description: 'Number of songs played by a user forever',
+        },
+        playedThisWeek: {
+            type: GraphQLInt,
+            description: 'Number of songs played by a user this week',
+        },
+        songs: {
+            type: SongConnection,
+            args: connectionArgs,
+            description: 'Songs belonging to this user',
+            resolve: (obj, {status, ...args}) => connectionFromPromisedArray(getSongs(), args),
+        }
+    }
+});
 
 const queryType = new GraphQLObjectType({
     name: 'Query',
     description: 'The root query type.',
     fields: {
         node: nodeField,
-        songs: {
-            type: SongConnection,
-            args: connectionArgs,
-            resolve: (_, args) => connectionFromPromisedArray(
-                getSongs(),
-                args,
-            ),
+        viewer: {
+            type: userType,
+            resolve: () => getUser(),
         },
         song: {
             type: songType,

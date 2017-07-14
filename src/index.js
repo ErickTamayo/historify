@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
+import './index.css';
 
 import {
     QueryRenderer,
@@ -55,28 +56,25 @@ const environment = new Environment({
   store,
 });
 
-ReactDOM.render(
-  <QueryRenderer
+const render = ({error, props}) => {
+  if (props) {
+    return <App viewer={props.viewer} />;
+  } else {
+    return <div>Loading</div>;
+  }
+}
+
+ReactDOM.render(<QueryRenderer
     environment={environment}
     query={graphql`
-      query appQuery {
-        songs {
-          edges {
-            node {
-              name
-            }
-          }
+      query srcQuery {
+        viewer {
+          ...App_viewer
         }
       }
     `}
-    variables={{}}
-    render={({error, props}) => {
-      if (props) {
-        return <App viewer={props.viewer} />;
-      } else {
-        return <div>Loading</div>;
-      }
-    }}
+    variables= {{}}
+    render = {render}
   />,
   document.getElementById('root')
 );

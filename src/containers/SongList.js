@@ -1,39 +1,43 @@
-import { connect } from 'react-redux';
 import React, { Component } from 'react';
+
+import {
+  createFragmentContainer,
+  graphql,
+} from 'react-relay';
+
 import Song from '../components/Song';
-import { fetchSongs } from '../actions/songs';
 import './SongList.css';
 
 class SongList extends Component {
-  componentDidMount() {
-      this.props.fetchSongs();
+
+  renderSongs() {
+    return this.props.viewer.songs.edges.map(edge =>
+        <Song key={edge.node.id} song={edge.node} viewer={this.props.viewer} />
+      );
   }
 
   render() {
-    console.log(this.props);
     return (
       <div className="song-list">
-        {
-          this.props.songs.map(song => {
-            return <Song key={song.id} {...song}/>
-          })
-        }
+        {this.renderSongs()}
       </div>
     );
   }
 }
 
-const mapStateToProps = state => {
-    return {
-      songs: state.media.songs,
+export default createFragmentContainer(SongList, {
+  viewer: graphql`
+    fragment SongList_viewer on User {
+      songs (
+        first: 2147483647 # max GraphQLInt
+      ) @connection (key: "SongsList_songs") {
+        edges {
+          node {
+            id,
+            ...Song_song
+          }
+        }
+      }
     }
-}
-
-const mapDispatchToProps = {
-    fetchSongs,
-}
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(SongList);
+  `
+});

@@ -1,0 +1,116 @@
+input AddSongInput {
+  # The name of the song.
+  name: String!
+
+  # The artist of the song.
+  artist: String!
+
+  # The image of the song.
+  image: String!
+
+  # The total plays of the song.
+  totalPlays: Int!
+  clientMutationId: String
+}
+
+type AddSongPayload {
+  song: Song
+  clientMutationId: String
+}
+
+# The root mutation type
+type Mutation {
+  createSong(input: AddSongInput!): AddSongPayload
+}
+
+# An object with an ID
+interface Node {
+  # The id of the object.
+  id: ID!
+}
+
+# Information about pagination in a connection.
+type PageInfo {
+  # When paginating forwards, are there more items?
+  hasNextPage: Boolean!
+
+  # When paginating backwards, are there more items?
+  hasPreviousPage: Boolean!
+
+  # When paginating backwards, the cursor to continue.
+  startCursor: String
+
+  # When paginating forwards, the cursor to continue.
+  endCursor: String
+}
+
+# The root query type.
+type Query {
+  # Fetches an object given its ID
+  node(
+    # The ID of an object
+    id: ID!
+  ): Node
+  viewer: User
+  song(
+    # The id of the song.
+    id: ID!
+  ): Song
+}
+
+# A song on historify
+type Song implements Node {
+  # The ID of an object
+  id: ID!
+
+  # The name of the song.
+  name: String
+
+  # The artist of the song.
+  artist: String
+
+  # The image of the song.
+  image: String
+
+  # The total plays of the song.
+  totalPlays: Int
+}
+
+# A connection to a list of items.
+type SongConnection {
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [SongEdge]
+}
+
+# An edge in a connection.
+type SongEdge {
+  # The item at the end of the edge
+  node: Song
+
+  # A cursor for use in pagination
+  cursor: String!
+}
+
+# An app user
+type User {
+  # The ID of an object
+  id: ID!
+
+  # The name of the user
+  name: String
+
+  # Profile picture
+  profileImg: String
+
+  # Number of songs played by a user forever
+  playedAllTime: Int
+
+  # Number of songs played by a user this week
+  playedThisWeek: Int
+
+  # Songs belonging to this user
+  songs(after: String, first: Int, before: String, last: Int): SongConnection
+}

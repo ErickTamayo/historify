@@ -30,6 +30,13 @@ const songs = [
     },
 ];
 
+const getUser = () => ({
+    name: 'Erick',
+    profileImg: 'https://placem.at/people?w=50&h=50',
+    playedAllTime: 1234,
+    playedThisWeek: 567,
+});
+
 const getSongById = (id) => new Promise((resolve) => {
     const [song] = songs.filter((song) => { return song.id == id });
     resolve(song);
@@ -58,6 +65,7 @@ const getObjectById = (type, id) => {
     return types[type](id);
 };
 
+exports.getUser = getUser;
 exports.getSongById = getSongById;
 exports.getSongs = getSongs;
 exports.createSong = createSong;
